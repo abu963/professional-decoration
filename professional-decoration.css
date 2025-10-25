@@ -1,0 +1,179 @@
+/* ================================
+   professional-decoration.css — واجهة تطوير مستقبلية
+   ================================ */
+
+body {
+  margin: 0;
+  font-family: 'Reem Kufi', sans-serif;
+  background: url('../assets/bg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #D4AF37;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+}
+
+/* ======= الشريط العلوي ======= */
+.top-bar {
+  background: url('../assets/shbg.png') no-repeat center;
+  background-size: cover;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  position: relative;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.menu-btn {
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid rgba(212, 175, 55, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.menu-btn img {
+  height: 40px;
+  width: 40px;
+}
+
+.site-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: 15px;
+}
+
+.site-title h1 {
+  font-size: 18px;
+  color: #D4AF37;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.logo {
+  height: 45px;
+  width: 45px;
+}
+
+/* ======= القائمة الجانبية ======= */
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: -260px;
+  width: 250px;
+  height: 100%;
+  background: rgba(212, 175, 55, 0.15);
+  backdrop-filter: blur(6px);
+  box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+  transition: right 0.4s ease;
+  z-index: 2000;
+  padding-top: 100px;
+}
+
+.side-panel.open { right: 0; }
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: transparent;
+  border: none;
+  color: #D4AF37;
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ======= المحتوى الرئيسي ======= */
+main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  gap: 25px;
+}
+
+/* ======= كلمة قريبًا ======= */
+.coming-soon {
+  font-family: 'Reem Kufi', sans-serif;
+  color: #D4AF37;
+  font-size: 44px;
+  text-shadow: 2px 2px 4px #000;
+  animation: glowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 2px 2px 4px #000, 0 0 8px rgba(212,175,55,0.6);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 2px 2px 6px #000, 0 0 14px rgba(212,175,55,0.85);
+    transform: scale(1.02);
+  }
+}
+
+/* ======= شريط الأدوات ======= */
+.toolbar {
+  width: 90%;
+  max-width: 900px;
+  height: 64px;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.05); /* شفافية 5% */
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease all;
+}
+
+/* ======= منطقة المعاينة المستقبلية ======= */
+.preview-area {
+  width: 90%;
+  max-width: 900px;
+  height: 400px;
+  background: rgba(255,255,255,0.05);
+  border: 2px dashed rgba(212,175,55,0.2);
+  border-radius: 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(212,175,55,0.5);
+  font-size: 18px;
+}
+
+/* ======= شريط الأزرار السفلي ======= */
+.action-bar {
+  width: 90%;
+  max-width: 900px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ======= تجاوب الجوال ======= */
+@media (max-width: 600px) {
+  main { padding-top: 40px; }
+  .coming-soon { font-size: 32px; }
+  .toolbar { height: 54px; }
+  .preview-area { height: 280px; }
+}
