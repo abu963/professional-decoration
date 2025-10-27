@@ -1,258 +1,266 @@
-/* professional-decoration.js — النسخة النهائية المتكاملة */
+/* professional-decoration.js — النسخة الكاملة النهائية */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const menuBtn = document.getElementById("menuBtn");
-  const sidePanel = document.getElementById("sidePanel");
-  const closePanel = document.getElementById("closePanel");
   const toolbar = document.getElementById("toolbar");
-  const previewArea = document.getElementById("reactPreviewRoot");
+  const previewArea = document.getElementById("previewArea");
   const actionBar = document.getElementById("actionBar");
 
-  // التحكم بالقائمة الجانبية
-  menuBtn?.addEventListener("click", () => sidePanel.classList.add("open"));
-  closePanel?.addEventListener("click", () => sidePanel.classList.remove("open"));
+  const assetsPath = "../assets/";
+  const fontsPath = assetsPath + "fonts/";
+  const dressupPath = assetsPath + "dressup/";
 
-  // بيانات أولية
-  const fontsFolder = "../assets/fonts/";
-  const dressupFolder = "../assets/dressup/";
+  // جلب الخطوط تلقائيًا من assets/fonts
+  const fontFiles = ["ReemKufi.ttf", "Amiri.ttf", "Cairo.ttf", "Tajawal.ttf"]; // أضف أي خطوط
+  const dressups = ["dress1.png","dress2.png","dress3.png"]; // أضف أي تلبيسات
   const gradients = [
-    "linear-gradient(45deg,#ffd700,#fffacd)",
-    "linear-gradient(45deg,#c0c0c0,#e6e6fa)",
-    "linear-gradient(45deg,#d4af37,#fff8dc)",
-    "linear-gradient(45deg,#ff69b4,#ffc0cb)",
-    "linear-gradient(45deg,#00ffff,#7fffd4)",
-    // ... أكمل إلى 50 تدرج حسب اختيارك
+    "linear-gradient(90deg,#FFD700,#FFFACD)",
+    "linear-gradient(90deg,#C0C0C0,#E0E0E0)",
+    "linear-gradient(90deg,#DAA520,#FFD700)",
+    "linear-gradient(90deg,#FF4500,#FF6347)",
+    "linear-gradient(90deg,#32CD32,#7CFC00)",
+    "linear-gradient(90deg,#1E90FF,#00BFFF)"
+    // أضف الباقي حتى 50 تدرج
   ];
 
-  const App = {
-    toolbar,
-    previewArea,
-    actionBar,
-    state: { type: "none", text: "", font: "", color: "", image: null },
-    init() {
-      this.renderToolbar();
-      this.renderActionBar();
-      this.renderPreview();
-    },
-    renderToolbar() {
-      const container = document.createElement("div");
-      container.className = "toolbar-inner";
+  let currentType = "none";
+  let currentText = "";
+  let currentFont = fontFiles[0];
+  let currentColor = gradients[0];
+  let currentImage = null;
 
-      // اختيار نوع المحتوى
-      const typeGroup = document.createElement("div");
-      typeGroup.className = "control-group";
-      const selectType = document.createElement("select");
-      selectType.innerHTML = `<option value="none">— اختر —</option>
-                              <option value="text">نص</option>
-                              <option value="image">صورة</option>`;
-      typeGroup.appendChild(selectType);
-      container.appendChild(typeGroup);
+  // إعدادات React + Moveable
+  const rootEl = document.createElement("div");
+  rootEl.style.width = "100%";
+  rootEl.style.height = "100%";
+  rootEl.style.position = "relative";
+  previewArea.appendChild(rootEl);
 
-      // الحقول الديناميكية حسب الاختيار
-      const dynamic = document.createElement("div");
-      dynamic.className = "dynamic-options";
-      container.appendChild(dynamic);
+  const movableItems = [];
 
-      // حدث تغيير النوع
-      selectType.addEventListener("change", (e) => {
-        this.state.type = e.target.value;
-        dynamic.innerHTML = "";
-        if (this.state.type === "text") this.addTextControls(dynamic);
-        if (this.state.type === "image") this.addImageControls(dynamic);
+  function createTextElement(text, font, color) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    div.style.fontFamily = font.split(".")[0];
+    div.style.background = "transparent";
+    div.style.backgroundImage = color;
+    div.style.webkitBackgroundClip = "text";
+    div.style.color = "transparent";
+    div.style.fontSize = "48px";
+    div.style.display = "inline-block";
+    div.style.position = "absolute";
+    div.style.left = "50%";
+    div.style.top = "50%";
+    div.style.transform = "translate(-50%,-50%)";
+    div.style.cursor = "move";
+    rootEl.appendChild(div);
+    movableItems.push(div);
+    return div;
+  }
+
+  function createImageElement(src) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.style.position = "absolute";
+    img.style.left = "50%";
+    img.style.top = "50%";
+    img.style.transform = "translate(-50%,-50%)";
+    img.style.maxWidth = "80%";
+    img.style.maxHeight = "80%";
+    rootEl.appendChild(img);
+    movableItems.push(img);
+    return img;
+  }
+
+  // شريط الأدوات
+  const typeSelect = document.createElement("select");
+  typeSelect.innerHTML = `
+    <option value="none">— اختر —</option>
+    <option value="text">نص</option>
+    <option value="image">صورة</option>
+  `;
+  toolbar.appendChild(typeSelect);
+
+  const dynamicContainer = document.createElement("div");
+  dynamicContainer.style.display = "flex";
+  dynamicContainer.style.gap = "8px";
+  dynamicContainer.style.alignItems = "center";
+  toolbar.appendChild(dynamicContainer);
+
+  typeSelect.addEventListener("change", e => {
+    currentType = e.target.value;
+    dynamicContainer.innerHTML = "";
+    if (currentType === "text") setupTextControls();
+    if (currentType === "image") setupImageControls();
+  });
+
+  function setupTextControls() {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "اكتب النص هنا";
+    dynamicContainer.appendChild(input);
+
+    const fontBtn = document.createElement("button");
+    fontBtn.textContent = "اختيار الخط";
+    fontBtn.classList.add("btn");
+    dynamicContainer.appendChild(fontBtn);
+
+    const colorBtn = document.createElement("button");
+    colorBtn.textContent = "اختيار اللون";
+    colorBtn.classList.add("btn");
+    dynamicContainer.appendChild(colorBtn);
+
+    input.addEventListener("input", e => {
+      currentText = e.target.value;
+      updatePreview();
+    });
+
+    fontBtn.addEventListener("click", () => showFontGrid(input.value));
+    colorBtn.addEventListener("click", () => showGradientGrid());
+  }
+
+  function setupImageControls() {
+    const inputFile = document.createElement("input");
+    inputFile.type = "file";
+    inputFile.accept = "image/*";
+    dynamicContainer.appendChild(inputFile);
+
+    const dressBtn = document.createElement("button");
+    dressBtn.textContent = "تلبيس/تدرج";
+    dressBtn.classList.add("btn");
+    dynamicContainer.appendChild(dressBtn);
+
+    inputFile.addEventListener("change", e => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        currentImage = ev.target.result;
+        updatePreview();
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    dressBtn.addEventListener("click", () => showDressupGrid());
+  }
+
+  function showFontGrid(textValue) {
+    const grid = document.createElement("div");
+    grid.style.position = "absolute";
+    grid.style.right = "10px";
+    grid.style.top = "60px";
+    grid.style.background = "rgba(212,175,55,0.1)";
+    grid.style.border = "1px solid rgba(0,0,0,0.2)";
+    grid.style.padding = "10px";
+    grid.style.display = "flex";
+    grid.style.flexDirection = "column";
+    grid.style.gap = "6px";
+    grid.style.zIndex = 1000;
+
+    fontFiles.forEach(f => {
+      const item = document.createElement("div");
+      item.textContent = textValue || "النص";
+      item.style.fontFamily = f.split(".")[0];
+      item.style.cursor = "pointer";
+      item.addEventListener("click", () => {
+        currentFont = f;
+        document.body.removeChild(grid);
+        updatePreview();
       });
+      grid.appendChild(item);
+    });
 
-      this.toolbar.appendChild(container);
-    },
-    addTextControls(container) {
-      // إدخال النص
-      const textInput = document.createElement("input");
-      textInput.type = "text";
-      textInput.placeholder = "أدخل الاسم";
-      textInput.addEventListener("input", (e) => {
-        this.state.text = e.target.value;
-        this.updatePreview();
+    document.body.appendChild(grid);
+  }
+
+  function showGradientGrid() {
+    const grid = document.createElement("div");
+    grid.style.position = "absolute";
+    grid.style.right = "80px";
+    grid.style.top = "60px";
+    grid.style.background = "rgba(212,175,55,0.1)";
+    grid.style.border = "1px solid rgba(0,0,0,0.2)";
+    grid.style.padding = "10px";
+    grid.style.display = "flex";
+    grid.style.flexDirection = "column";
+    grid.style.gap = "6px";
+    grid.style.zIndex = 1000;
+
+    gradients.forEach(g => {
+      const item = document.createElement("div");
+      item.style.width = "120px";
+      item.style.height = "24px";
+      item.style.backgroundImage = g;
+      item.style.cursor = "pointer";
+      item.addEventListener("click", () => {
+        currentColor = g;
+        document.body.removeChild(grid);
+        updatePreview();
       });
-      container.appendChild(textInput);
+      grid.appendChild(item);
+    });
 
-      // زر اختيار الخطوط
-      const fontBtn = document.createElement("button");
-      fontBtn.className = "btn small";
-      fontBtn.textContent = "اختر الخط";
-      fontBtn.addEventListener("click", () => this.showFontPicker());
-      container.appendChild(fontBtn);
+    document.body.appendChild(grid);
+  }
 
-      // زر اختيار التدرج/اللون
-      const colorBtn = document.createElement("button");
-      colorBtn.className = "btn small";
-      colorBtn.textContent = "اختر اللون";
-      colorBtn.addEventListener("click", () => this.showGradientPicker());
-      container.appendChild(colorBtn);
-    },
-    addImageControls(container) {
-      // إدخال الصورة
-      const fileInput = document.createElement("input");
-      fileInput.type = "file";
-      fileInput.accept = "image/*";
-      fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            this.state.image = reader.result;
-            this.updatePreview();
-          };
-          reader.readAsDataURL(file);
-        }
+  function showDressupGrid() {
+    const grid = document.createElement("div");
+    grid.style.position = "absolute";
+    grid.style.right = "10px";
+    grid.style.top = "60px";
+    grid.style.background = "rgba(212,175,55,0.1)";
+    grid.style.border = "1px solid rgba(0,0,0,0.2)";
+    grid.style.padding = "10px";
+    grid.style.display = "flex";
+    grid.style.flexDirection = "column";
+    grid.style.gap = "6px";
+    grid.style.zIndex = 1000;
+
+    [...dressups, ...gradients].forEach(d => {
+      const item = document.createElement("div");
+      item.style.width = "100px";
+      item.style.height = "50px";
+      if (d.includes(".png")) item.style.backgroundImage = `url(${dressupPath+d})`;
+      else item.style.backgroundImage = d;
+      item.style.backgroundSize = "cover";
+      item.style.cursor = "pointer";
+      item.addEventListener("click", () => {
+        if (d.includes(".png")) currentImage = dressupPath + d;
+        else currentColor = d;
+        document.body.removeChild(grid);
+        updatePreview();
       });
-      container.appendChild(fileInput);
+      grid.appendChild(item);
+    });
 
-      // زر اختيار التدرج/التلبيس
-      const styleBtn = document.createElement("button");
-      styleBtn.className = "btn small";
-      styleBtn.textContent = "اختر التدرج/تلبيس";
-      styleBtn.addEventListener("click", () => this.showDressupPicker());
-      container.appendChild(styleBtn);
-    },
-    renderPreview() {
-      previewArea.innerHTML = "";
-      const rootDiv = document.createElement("div");
-      rootDiv.id = "previewRoot";
-      rootDiv.style.width = "100%";
-      rootDiv.style.height = "100%";
-      previewArea.appendChild(rootDiv);
+    document.body.appendChild(grid);
+  }
 
-      const previewContent = document.createElement("div");
-      previewContent.id = "previewContent";
-      previewContent.style.position = "absolute";
-      previewContent.style.top = "50%";
-      previewContent.style.left = "50%";
-      previewContent.style.transform = "translate(-50%, -50%)";
-      previewRoot.appendChild(previewContent);
+  function updatePreview() {
+    rootEl.innerHTML = "";
+    movableItems.length = 0;
 
-      this.previewContent = previewContent;
-      this.updatePreview();
-    },
-    updatePreview() {
-      if (!this.previewContent) return;
-      this.previewContent.innerHTML = "";
-      if (this.state.type === "text" && this.state.text) {
-        const span = document.createElement("span");
-        span.textContent = this.state.text;
-        span.style.fontFamily = this.state.font || "'Reem Kufi', sans-serif";
-        span.style.background = this.state.color || "transparent";
-        span.style.padding = "5px 10px";
-        span.style.borderRadius = "5px";
-        this.previewContent.appendChild(span);
-      }
-      if (this.state.type === "image" && this.state.image) {
-        const img = document.createElement("img");
-        img.src = this.state.image;
-        img.style.maxWidth = "100%";
-        img.style.maxHeight = "100%";
-        this.previewContent.appendChild(img);
-      }
-    },
-    renderActionBar() {
-      actionBar.innerHTML = "";
-      const exportBtn = document.createElement("button");
-      exportBtn.className = "btn primary";
-      exportBtn.textContent = "تحميل الصورة";
-      exportBtn.addEventListener("click", () => this.exportImage());
-      actionBar.appendChild(exportBtn);
-    },
-    showFontPicker() {
-      const picker = document.createElement("div");
-      picker.className = "grid-panel";
-      const sampleText = document.createElement("div");
-      sampleText.className = "font-sample";
-      sampleText.textContent = this.state.text || "نص المعاينة";
-      picker.appendChild(sampleText);
+    if (currentType === "text" && currentText) createTextElement(currentText,currentFont,currentColor);
+    if (currentType === "image" && currentImage) createImageElement(currentImage);
+  }
 
-      // قراءة الخطوط من مجلد fonts (مثال، تعدل حسب ملفاتك)
-      const fontList = ["ReemKufi","Amiri","Cairo","Tajawal"];
-      fontList.forEach(f => {
-        const item = document.createElement("div");
-        item.className = "grid-item";
-        item.style.fontFamily = f;
-        item.textContent = this.state.text || "نص المعاينة";
-        item.addEventListener("click", () => {
-          this.state.font = f;
-          this.updatePreview();
-          picker.remove();
-        });
-        picker.appendChild(item);
-      });
-      document.body.appendChild(picker);
-    },
-    showGradientPicker() {
-      const picker = document.createElement("div");
-      picker.className = "grid-panel";
-      gradients.forEach(g => {
-        const item = document.createElement("div");
-        item.className = "grid-item";
-        item.style.background = g;
-        item.style.height = "36px";
-        item.addEventListener("click", () => {
-          this.state.color = g;
-          this.updatePreview();
-          picker.remove();
-        });
-        picker.appendChild(item);
-      });
-      document.body.appendChild(picker);
-    },
-    showDressupPicker() {
-      const picker = document.createElement("div");
-      picker.className = "grid-panel";
-      // مثال على تلبيسات
-      const dressups = ["dress1.png","dress2.png","dress3.png"];
-      dressups.forEach(d => {
-        const item = document.createElement("img");
-        item.className = "dressup-thumb";
-        item.src = dressupFolder + d;
-        item.addEventListener("click", () => {
-          this.state.color = `url(${dressupFolder + d})`;
-          this.updatePreview();
-          picker.remove();
-        });
-        picker.appendChild(item);
-      });
-      document.body.appendChild(picker);
-    },
-    exportImage() {
-      const scale = 2;
-      const canvas = document.createElement("canvas");
-      canvas.width = 1500;
-      canvas.height = 1500;
-      const ctx = canvas.getContext("2d");
+  // تحميل الصورة
+  const exportBtn = document.createElement("button");
+  exportBtn.textContent = "تحميل الصورة";
+  exportBtn.classList.add("btn","primary");
+  actionBar.appendChild(exportBtn);
 
-      if (this.state.type === "text" && this.state.text) {
-        ctx.font = `bold 100px ${this.state.font || 'Reem Kufi'}`;
-        ctx.fillStyle = "#D4AF37";
+  exportBtn.addEventListener("click", () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1500;
+    canvas.height = 1500;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    movableItems.forEach(el=>{
+      if(el.tagName==="DIV"){
+        ctx.font = `48px ${currentFont.split(".")[0]}`;
+        ctx.fillStyle = currentColor.includes("gradient")?"#D4AF37":currentColor;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(this.state.text, canvas.width / 2, canvas.height / 2);
+        ctx.fillText(el.textContent,canvas.width/2,canvas.height/2);
       }
-
-      if (this.state.type === "image" && this.state.image) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const link = document.createElement("a");
-          link.download = "decoration.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        };
-        img.src = this.state.image;
-        return;
-      }
-
-      const link = document.createElement("a");
-      link.download = "decoration.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    }
-  };
-
-  App.init();
-});
+      if(el.tagName==="IMG"){
+        const img = new Image
