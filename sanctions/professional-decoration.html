@@ -2,60 +2,175 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>الزخرفة الاحترافية — عالم التصاميم والزخرفة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>عالم التصاميم والزخرفة — الزخرفة الاحترافية</title>
 
-  <!-- ربط CSS -->
+  <!-- رابط CSS -->
   <link rel="stylesheet" href="../css/professional-decoration.css">
 
-  <!-- الخط الكوفي -->
-  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* تأكيد إضافي لتوافق المعاينة */
+    #editorCanvas { position: relative; }
+    .export-size {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
 
-  <!-- React + ReactDOM (UMD) و Moveable عبر CDN -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/moveable/dist/moveable.min.js"></script>
+    .export-size label {
+      font-size: 14px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .export-size input {
+      width: 80px;
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    #editorCanvas {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #editorCanvas .canvas-item.text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .btn.primary.download {
+      background-color: #4caf50;
+      color: white;
+    }
+  </style>
 </head>
 <body>
-  <!-- الشريط العلوي -->
-  <header class="top-bar" role="banner">
-    <button id="menuBtn" class="menu-btn" aria-label="فتح القائمة">
-      <img src="../assets/yhbg.png" alt="قائمة" />
-    </button>
-
-    <div class="site-title" role="heading" aria-level="1">
-      <h1>عالم التصاميم والزخرفة</h1>
-      <img src="../assets/abu7amza.png" alt="شعار التطبيق" class="logo">
+  <!-- شريط علوي -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-inner">
+      <button id="toggleSidebar" class="sidebar-btn" aria-label="قائمة">
+        <img src="../assets/yhbg.png" alt="قائمة">
+      </button>
+      <div class="brand">
+        <img src="../assets/abu7amza.png" alt="لوغو" class="app-logo">
+        <div class="app-title">عالم التصاميم والزخرفة</div>
+      </div>
     </div>
   </header>
 
-  <!-- القائمة الجانبية -->
-  <nav id="sidePanel" class="side-panel" aria-label="قائمة التنقل">
-    <button id="closePanel" class="close-btn" aria-label="إغلاق القائمة">×</button>
-    <ul>
-      <li><a href="../sections/home.html">🏠 الصفحة الرئيسية</a></li>
-      <li><a href="../sections/professional-decoration.html" class="active">🎨 الزخرفة الاحترافية</a></li>
-      <li><a href="../sections/name-decoration.html">✍️ زخرفة الأسماء</a></li>
-      <li><a href="../sections/about.html">ℹ️ لمحة عن التطبيق</a></li>
-      <li><a href="../sections/contact.html">☎️ اتصل بنا</a></li>
-    </ul>
-  </nav>
+  <!-- اللوحة الجانبية -->
+  <aside id="siteSidebar" class="sidebar" aria-hidden="true">
+    <button id="closeSidebar" class="sidebar-close" aria-label="إغلاق">×</button>
+    <nav class="sidebar-menu" aria-label="القائمة الرئيسية">
+      <ul>
+        <li><a href="../index.html">الصفحة الرئيسية</a></li>
+        <li><a href="home.html">التصاميم الجاهزة</a></li>
+        <li><a href="professional-decoration.html" class="active">الزخرفة الاحترافية</a></li>
+        <li><a href="name-decoration.html">زخرفة الأسماء</a></li>
+        <li><a href="about.html">لمحة عن التطبيق</a></li>
+        <li><a href="contact.html">اتصل بنا</a></li>
+      </ul>
+    </nav>
+  </aside>
 
   <!-- المحتوى الرئيسي -->
-  <main class="main-content" role="main">
-    <!-- شريط الأدوات الذكي -->
-    <div id="toolbar" class="toolbar"></div>
+  <main class="main" id="main" style="background-image:url('../assets/bg.png')">
+    <section class="editor-container">
+      <h1 class="editor-title">الزخرفة الاحترافية</h1>
 
-    <!-- منطقة المعاينة -->
-    <div id="previewArea" class="preview-area">
-      <div id="reactPreviewRoot" style="width:100%;height:100%;"></div>
+      <div class="toolbar" role="toolbar" aria-label="أدوات المحرر">
+        <label>النوع
+          <select id="modeSelect">
+            <option value="text">نص</option>
+            <option value="image">صورة</option>
+          </select>
+        </label>
+
+        <!-- تحكمات النص -->
+        <div id="textControls" class="conditional">
+          <label>النص
+            <input id="textInput" type="text" placeholder="اكتب النص">
+          </label>
+
+<label>الخط
+  <div class="font-select-wrapper">
+    <button id="openFontList" class="open-list">اختر خط</button>
+
+    <div id="fontList" class="panel-list hidden" aria-hidden="true">
+      <div class="panel-scroll">
+        <div class="font-item" style="font-family: 'أنيق';">أنيق</div>
+<div class="font-item" style="font-family: 'بطرس';">بطرس</div>
+<div class="font-item" style="font-family: 'ثلث';">ثلث</div>
+<div class="font-item" style="font-family: 'حجاز';">حجاز</div>
+<div class="font-item" style="font-family: 'دوسوقي';">دوسوقي</div>
+<div class="font-item" style="font-family: 'ديواني';">ديواني</div>
+<div class="font-item" style="font-family: 'لهب';">لهب</div>
+<div class="font-item" style="font-family: 'متقن';">متقن</div>
+<div class="font-item" style="font-family: 'مثير';">مثير</div>
+      </div>
     </div>
+  </div>
+</label>
+          <label>نوع اللون
+            <select id="textColorMode">
+              <option value="solid">لون ثابت</option>
+              <option value="gradient">تدرج</option>
+              <option value="dress">تلبيس</option>
+            </select>
+          </label>
+          <button id="openColorGrid" class="btn small">التدرجات</button>
+          <button id="openDressGrid" class="btn small">التلبيسات</button>
+        </div>
 
-    <!-- شريط الإجراءات السفلي -->
-    <div id="actionBar" class="action-bar"></div>
+        <!-- تحكمات الصورة -->
+        <div id="imageControls" class="conditional hidden">
+          <label class="file-label">رفع صورة شفافة
+            <input id="fileImage" type="file" accept="image/png,image/*">
+          </label>
+
+        <!-- الزر المطلوب — اسم "اضف" وخط أسود ولون ذهبي فاتح -->
+        <button id="btnAdd" class="btn add-gold">اضف</button>
+      </div>
+
+      <!-- المعاينة -->
+      <div id="editorCanvas" class="editor-canvas" tabindex="0" role="application" aria-label="لوحة التصميم">
+        <div class="hint"></div>
+      </div>
+
+      <div class="bottom-bar">
+        <button id="deleteSelected" class="btn danger">حذف المحدد</button>
+
+        <div class="export-size">
+          <label>العرض (px)
+            <input id="widthInput" type="number" placeholder="العرض" value="1250" min="100" step="100">
+          </label>
+          <label>الارتفاع (px)
+            <input id="heightInput" type="number" placeholder="الارتفاع" value="1250" min="100" step="100">
+          </label>
+        </div>
+
+        <button id="downloadImage" class="btn primary download">تحميل التصميم</button>
+      </div>
+    </section>
   </main>
 
-  <!-- سكربت الأدوات -->
-  <script src="../js/professional-decoration.js"></script>
+  <!-- نافذة التدرجات والتلبيسات -->
+  <div id="popupContainer" class="popup-container" aria-hidden="true"></div>
+
+  <!-- سكربت -->
+  <script src="../js/professional-decoration.js" defer></script>
 </body>
-</html>
+  </html>
