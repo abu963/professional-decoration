@@ -1,235 +1,220 @@
-/* professional-decoration.css — النسخة النهائية المتكاملة */
+/* professional-decoration.css */
 
-/* ======= إعدادات عامة ======= */
+/* الأساسيات الأصلية */
+:root {
+  --gold1: #ffd700;
+  --gold2: #f0c36b;
+  --panel: rgba(255, 235, 180, 0.10);
+  --panel-40: rgba(255, 235, 180, 0.40);
+  --accent: #cfa23a;
+  --bg-dark: #0d0d0d;
+}
+
+/* إعادة التعيين */
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: 'Reem Kufi', sans-serif;
-  background: url('../assets/bg.png') no-repeat center center fixed;
-  background-size: cover;
-  color: #D4AF37;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: center;
+  font-family: "Cairo", sans-serif;
+  background: var(--bg-dark);
+  color: #fff;
+  direction: rtl;
 }
 
-/* ======= الشريط العلوي ======= */
-.top-bar {
-  background: url('../assets/shbg.png') no-repeat center;
-  background-size: cover;
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 15px;
-  position: relative;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-
-.menu-btn {
-  height: 40px;
-  width: 40px;
-  border-radius: 55%;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.6);
+/* شريط العنوان */
+.topbar {
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  background-image: url('../assets/shbg.png');
+  background-size: cover;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
 }
-
-.menu-btn img {
-  height: 45px;
-  width: 45px;
-}
-
-.site-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse;
-  gap: 15px;
-}
-
-.site-title h1 {
-  font-size: 18px;
-  color: #D4AF37;
-  text-shadow: 1px 1px 3px #000;
-}
-
-.logo {
-  height: 45px;
-  width: 45px;
-}
-
-/* ======= القائمة الجانبية ======= */
-.side-panel {
-  position: fixed;
-  top: 0;
-  right: -260px;
-  width: 250px;
-  height: 100%;
-  background: rgba(212, 175, 55, 0.15);
-  backdrop-filter: blur(6px);
-  box-shadow: -2px 0 6px rgba(0,0,0,0.2);
-  transition: right 0.4s ease;
-  z-index: 2000;
-  padding-top: 100px;
-}
-
-.side-panel.open { right: 0; }
-
-.close-btn {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: transparent;
-  border: none;
-  color: #001;
-  font-size: 26px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* ======= المحتوى الرئيسي ======= */
-main {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
-  gap: 25px;
-}
-
-/* ======= شريط الأدوات الذكي ======= */
-.toolbar {
-  width: 100%;
-  max-width: none;
-  height: auto;
-  border-radius: 0px;
-  background: rgba(212, 175, 55, 0.05);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.3s ease all;
-  padding: 10px 12px;
-}
-
-/* ترتيب داخلي للشريط */
-.toolbar-inner {
+.topbar-inner {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-/* مجموعات التحكم */
-.control-group { display:flex; gap:8px; align-items:center; }
-
-/* حقول وديناميكية */
-.dynamic-options { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
-/* ازرار وخيارات */
-.btn {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  background: rgba(212,175,55,0.15);
-  color: #000;
-  font-weight: 700;
-}
-.btn.small { padding:6px 8px; font-size:14px; }
-.btn.primary {
-  background: linear-gradient(90deg,#D4AF37,#ffd97a);
-  color: #111;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-/* ======= منطقة المعاينة ======= */
-.preview-area {
-  width: 90%;
-  max-width: 900px;
-  height: 400px;
-  background: rgba(255,255,255,0.05);
-  border: 2px dashed rgba(212,175,55,0.2);
-  border-radius: 10px;
-  margin-top: 10px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(212,175,55,0.5);
-  font-size: 18px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-logo {
+  width: 48px;
+  height: 48px;
+}
+.app-title {
+  color: var(--gold1);
+  font-weight: 800;
+  font-size: 20px;
+}
+
+/* الزر الجانبي */
+.sidebar-btn img { width: 44px; height: 44px; }
+
+/* الأزرار */
+.btn {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 0;
+  background: linear-gradient(90deg, var(--gold2), var(--gold1));
+  color: #120800;
+  cursor: pointer;
+  font-weight:700;
+}
+.btn.small { padding: 6px 8px; font-size: 14px; }
+.btn.danger { background: #d9534f; color: #fff; }
+.btn.primary.download {
+  background: linear-gradient(90deg,#f7df9a,#f0c65a);
+  color: #000;
+}
+
+/* زر أضف */
+.btn.add-gold {
+  background: linear-gradient(90deg, rgba(255, 244, 179, 0.95), rgba(255, 219, 102, 0.95));
+  color: #120800;
+  font-weight: 800;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* المعاينة */
+.editor-canvas {
   position: relative;
+  background: linear-gradient(180deg,#ffffff,#f7f7f7);
+  min-height: 420px;
+  border-radius: 12px;
+  padding: 14px;
+  border: 3px dashed rgba(207,162,58,0.45);
   overflow: hidden;
 }
 
-/* حاوية العنصر داخل المعاينة */
-.preview-canvas-wrap {
-  width: 100%;
-  height: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* إطار (مربع) العنصر selectable */
-.preview-box {
+/* النص */
+.text-item {
   position: absolute;
+  font-size: 48px;
+  color: #000;
+  cursor: grab;
+  user-select: none;
+  font-family: "Cairo", sans-serif;
+}
+.text-item.dressed {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* الصور */
+.img-wrap {
+  position: absolute;
+  cursor: grab;
+}
+.img-wrap img {
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* المقابض */
+.rotate-handle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,var(--gold1),var(--gold2));
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:move;
-  user-select:none;
+  color:#120800;
+  font-weight:700;
+  position:absolute;
+  top:-18px;
+  left:-18px;
+  cursor:grab;
 }
 
-/* زر التحميل وشريط الأدوات السفلي */
-.action-bar {
-  width: 90%;
-  max-width: 900px;
-  display: flex;
+/* تبويبات ذهبية شفافة (للقوائم) */
+.panel-list {
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  padding: 10px;
+  position: absolute;
+  z-index: 10;
+  display: none;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.panel-list.active {
+  display: block;
+}
+.font-item, .grad-sample, .dress-item {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 6px;
+  transition: all 0.2s ease;
+}
+.font-item:hover, .grad-sample:hover, .dress-item:hover {
+  transform: scale(1.05);
+}
+
+/* نافذة التدرجات والتلبيسات */
+.popup-container {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+.popup-container.open { display: flex; }
+.popup {
+  width: 920px;
+  max-width: 95%;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+}
+.grad-grid, .dress-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+.grad-sample {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+.dress-item {
+  height:86px;
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #eee;
+}
+.dress-item img{ max-width:100%; max-height:100%; object-fit:cover; }
+
+/* الحذف / التحميل */
+.bottom-bar {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:12px;
 }
 
-/* كلمة قريبًا */
-.coming-soon {
-  font-family: 'Reem Kufi', sans-serif;
-  color: #D4AF37;
-  font-size: 44px;
-  text-shadow: 2px 2px 4px #000;
-  animation: glowPulse 3.5s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    text-shadow: 2px 2px 4px #000, 0 0 8px rgba(212,175,55,0.6);
-    transform: scale(1);
-  }
-  50% {
-    text-shadow: 2px 2px 6px #000, 0 0 14px rgba(212,175,55,0.85);
-    transform: scale(1.02);
-  }
-}
-
-/* تجاوب الجوال */
-@media (max-width: 600px) {
-  main { padding-top: 40px; }
-  .coming-soon { font-size: 32px; }
-  .toolbar { height: auto; padding: 10px; }
-  .preview-area { height: 320px; }
+/* الهاتف */
+@media(max-width:600px){
+  .grad-grid{grid-template-columns:repeat(2,1fr)}
+  .dress-grid{grid-template-columns:repeat(2,1fr)}
+  .popup{width:95%;}
 }
