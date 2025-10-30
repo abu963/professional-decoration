@@ -1,16 +1,16 @@
-/* professional-decoration.css */
+/* professional-decoration.css - النسخة المعدّلة النهائية */
 
 /* الأساسيات الأصلية */
 :root {
   --gold1: #ffd700;
-  --gold2: #f0c36b;
+  --gold2: #b8860b;
   --panel: rgba(255, 235, 180, 0.10);
   --panel-40: rgba(255, 235, 180, 0.40);
   --accent: #cfa23a;
   --bg-dark: #0d0d0d;
 }
 
-/* إعادة التعيين */
+/* reset */
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -20,7 +20,7 @@ body {
   direction: rtl;
 }
 
-/* شريط العنوان */
+/* الشريط العلوي */
 .topbar {
   height: 72px;
   display: flex;
@@ -28,7 +28,11 @@ body {
   justify-content: center;
   background-image: url('../assets/shbg.png');
   background-size: cover;
+  background-position: center;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 99;
 }
 .topbar-inner {
   width: 100%;
@@ -37,24 +41,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
 }
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-.app-logo {
-  width: 48px;
-  height: 48px;
-}
+.app-logo { width: 48px; height: 48px; object-fit: contain; }
 .app-title {
   color: var(--gold1);
   font-weight: 800;
   font-size: 20px;
 }
-
-/* الزر الجانبي */
-.sidebar-btn img { width: 44px; height: 44px; }
 
 /* الأزرار */
 .btn {
@@ -64,22 +63,55 @@ body {
   background: linear-gradient(90deg, var(--gold2), var(--gold1));
   color: #120800;
   cursor: pointer;
-  font-weight:700;
+  font-weight: 700;
 }
 .btn.small { padding: 6px 8px; font-size: 14px; }
 .btn.danger { background: #d9534f; color: #fff; }
 .btn.primary.download {
-  background: linear-gradient(90deg,#f7df9a,#f0c65a);
+  background: linear-gradient(90deg, #f7df9a, #f0c65a);
   color: #000;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 /* زر أضف */
 .btn.add-gold {
-  background: linear-gradient(90deg, rgba(255, 244, 179, 0.95), rgba(255, 219, 102, 0.95));
-  color: #120800;
+  background: linear-gradient(90deg, #fff2b0, #f0c55a);
+  color: #000;
   font-weight: 800;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: 0.2s ease;
+}
+.btn.add-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* الأدوات */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  background: var(--panel-40);
+  padding: 10px;
+  border-radius: 10px;
+}
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #111;
+}
+.toolbar select,
+.toolbar input[type="text"],
+.toolbar input[type="file"] {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  color: #000;
 }
 
 /* المعاينة */
@@ -92,8 +124,6 @@ body {
   border: 3px dashed rgba(207,162,58,0.45);
   overflow: hidden;
 }
-
-/* النص */
 .text-item {
   position: absolute;
   font-size: 48px;
@@ -108,8 +138,6 @@ body {
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
-
-/* الصور */
 .img-wrap {
   position: absolute;
   cursor: grab;
@@ -120,47 +148,43 @@ body {
   border-radius: 10px;
 }
 
-/* المقابض */
-.rotate-handle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,var(--gold1),var(--gold2));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#120800;
-  font-weight:700;
-  position:absolute;
-  top:-18px;
-  left:-18px;
-  cursor:grab;
+/* الحذف / التحميل */
+.bottom-bar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
-/* تبويبات ذهبية شفافة (للقوائم) */
+/* قائمة الخطوط / التدرجات / التلبيسات */
 .panel-list {
-  background: rgba(255, 215, 0, 0.08);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-  padding: 10px;
   position: absolute;
-  z-index: 10;
+  top: 40px;
+  right: 0;
+  z-index: 999;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
   display: none;
-  max-height: 300px;
-  overflow-y: auto;
 }
-.panel-list.active {
-  display: block;
-}
-.font-item, .grad-sample, .dress-item {
-  cursor: pointer;
+.panel-list.active { display: block; }
+
+.panel-list .font-item {
+  color: #000;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 6px;
-  padding: 6px;
-  transition: all 0.2s ease;
+  margin: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.1);
+  transition: 0.2s ease;
 }
-.font-item:hover, .grad-sample:hover, .dress-item:hover {
-  transform: scale(1.05);
+.panel-list .font-item:hover {
+  background: linear-gradient(90deg,#fff8d4,#ffe89e);
 }
 
 /* نافذة التدرجات والتلبيسات */
@@ -171,50 +195,49 @@ body {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.45);
-  z-index: 1200;
+  z-index: 1000;
 }
 .popup-container.open { display: flex; }
 .popup {
-  width: 920px;
-  max-width: 95%;
+  width: 90%;
+  max-width: 900px;
   background: rgba(255, 215, 0, 0.1);
   border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: 12px;
   padding: 14px;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
 }
 .grad-grid, .dress-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 .grad-sample {
   height: 48px;
-  border-radius: 10px;
-  border: 1px solid #eee;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
 }
 .dress-item {
-  height:86px;
-  border-radius:10px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid #eee;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.dress-item img{ max-width:100%; max-height:100%; object-fit:cover; }
-
-/* الحذف / التحميل */
-.bottom-bar {
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  margin-top:12px;
+.dress-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* الهاتف */
-@media(max-width:600px){
-  .grad-grid{grid-template-columns:repeat(2,1fr)}
-  .dress-grid{grid-template-columns:repeat(2,1fr)}
-  .popup{width:95%;}
+@media(max-width:600px) {
+  .grad-grid { grid-template-columns: repeat(2,1fr); }
+  .dress-grid { grid-template-columns: repeat(2,1fr); }
+  .popup { width: 95%; }
+  .toolbar { flex-direction: column; }
 }
