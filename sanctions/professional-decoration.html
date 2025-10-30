@@ -2,62 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>عالم التصاميم والزخرفة — الزخرفة الاحترافية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الزخرفة الاحترافية</title>
 
-  <!-- رابط CSS -->
+  <!-- CSS -->
   <link rel="stylesheet" href="../css/professional-decoration.css">
-
-  <style>
-    /* تأكيد إضافي لتوافق المعاينة */
-    #editorCanvas { position: relative; }
-    .export-size {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .export-size label {
-      font-size: 14px;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .export-size input {
-      width: 80px;
-      padding: 4px 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      text-align: center;
-    }
-
-    #editorCanvas {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    #editorCanvas .canvas-item.text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .btn.primary.download {
-      background-color: #4caf50;
-      color: white;
-    }
-  </style>
 </head>
 <body>
+
   <!-- شريط علوي -->
   <header class="topbar" id="topbar">
     <div class="topbar-inner">
@@ -71,7 +23,7 @@
     </div>
   </header>
 
-  <!-- اللوحة الجانبية -->
+  <!-- الشريط الجانبي -->
   <aside id="siteSidebar" class="sidebar" aria-hidden="true">
     <button id="closeSidebar" class="sidebar-close" aria-label="إغلاق">×</button>
     <nav class="sidebar-menu" aria-label="القائمة الرئيسية">
@@ -99,78 +51,64 @@
           </select>
         </label>
 
-        <!-- تحكمات النص -->
+        <!-- تحكم النص -->
         <div id="textControls" class="conditional">
           <label>النص
             <input id="textInput" type="text" placeholder="اكتب النص">
           </label>
 
-<label>الخط
-  <div class="font-select-wrapper">
-    <button id="openFontList" class="open-list">اختر خط</button>
-
-    <div id="fontList" class="panel-list hidden" aria-hidden="true">
-      <div class="panel-scroll">
-        <div class="font-item" style="font-family: 'أنيق';">أنيق</div>
-<div class="font-item" style="font-family: 'بطرس';">بطرس</div>
-<div class="font-item" style="font-family: 'ثلث';">ثلث</div>
-<div class="font-item" style="font-family: 'حجاز';">حجاز</div>
-<div class="font-item" style="font-family: 'دوسوقي';">دوسوقي</div>
-<div class="font-item" style="font-family: 'ديواني';">ديواني</div>
-<div class="font-item" style="font-family: 'لهب';">لهب</div>
-<div class="font-item" style="font-family: 'متقن';">متقن</div>
-<div class="font-item" style="font-family: 'مثير';">مثير</div>
-      </div>
-    </div>
-  </div>
-</label>
-          <label>نوع اللون
-            <select id="textColorMode">
-              <option value="solid">لون ثابت</option>
-              <option value="gradient">تدرج</option>
-              <option value="dress">تلبيس</option>
-            </select>
+          <label>الخط
+            <button id="openFontList" class="open-list btn small">اختر الخط</button>
           </label>
-          <button id="openColorGrid" class="btn small">التدرجات</button>
-          <button id="openDressGrid" class="btn small">التلبيسات</button>
+
+          <label>التدرج أو التلبيس
+            <button id="openGradientList" class="btn small">التدرجات</button>
+            <button id="openDressList" class="btn small">التلبيسات</button>
+          </label>
         </div>
 
-        <!-- تحكمات الصورة -->
+        <!-- تحكم الصورة -->
         <div id="imageControls" class="conditional hidden">
-          <label class="file-label">رفع صورة شفافة
-            <input id="fileImage" type="file" accept="image/png,image/*">
+          <label class="file-label">رفع صورة
+            <input id="fileImage" type="file" accept="image/*">
           </label>
+          <label>التدرج أو التلبيس
+            <button id="openGradientListImg" class="btn small">التدرجات</button>
+            <button id="openDressListImg" class="btn small">التلبيسات</button>
+          </label>
+        </div>
 
-        <!-- الزر المطلوب — اسم "اضف" وخط أسود ولون ذهبي فاتح -->
-        <button id="btnAdd" class="btn add-gold">اضف</button>
+        <!-- زر أضف -->
+        <button id="btnAdd" class="btn add-gold">أضف</button>
       </div>
 
       <!-- المعاينة -->
       <div id="editorCanvas" class="editor-canvas" tabindex="0" role="application" aria-label="لوحة التصميم">
-        <div class="hint"></div>
+        <div class="hint">ابدأ بإضافة نص أو صورة لتعديلها هنا</div>
       </div>
 
+      <!-- شريط التحكم بالتحميل -->
       <div class="bottom-bar">
         <button id="deleteSelected" class="btn danger">حذف المحدد</button>
-
-        <div class="export-size">
-          <label>العرض (px)
-            <input id="widthInput" type="number" placeholder="العرض" value="1250" min="100" step="100">
-          </label>
-          <label>الارتفاع (px)
-            <input id="heightInput" type="number" placeholder="الارتفاع" value="1250" min="100" step="100">
-          </label>
-        </div>
-
+        <label>العرض (px)
+          <input id="widthInput" type="number" value="1250" min="100">
+        </label>
+        <label>الارتفاع (px)
+          <input id="heightInput" type="number" value="1250" min="100">
+        </label>
         <button id="downloadImage" class="btn primary download">تحميل التصميم</button>
       </div>
     </section>
   </main>
 
-  <!-- نافذة التدرجات والتلبيسات -->
-  <div id="popupContainer" class="popup-container" aria-hidden="true"></div>
+  <!-- نوافذ القوائم -->
+  <div id="fontList" class="panel-list hidden"></div>
+  <div id="gradientList" class="popup-container"></div>
+  <div id="dressList" class="popup-container"></div>
 
+  <!-- مكتبة html2canvas للتحميل -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <!-- سكربت -->
   <script src="../js/professional-decoration.js" defer></script>
 </body>
-  </html>
+</html>
