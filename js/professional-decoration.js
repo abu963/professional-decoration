@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnAdd = document.getElementById("btnAdd");
   const openFontList = document.getElementById("openFontList");
   const fontList = document.getElementById("fontList");
-  const openColorGrid = document.getElementById("openColorGrid");
-  const openDressGrid = document.getElementById("openDressGrid");
+  const openGradientList = document.getElementById("openGradientList");
+  const openDressList = document.getElementById("openDressList");
   const modeSelect = document.getElementById("modeSelect");
   const editorCanvas = document.getElementById("editorCanvas");
   const deleteSelected = document.getElementById("deleteSelected");
@@ -14,225 +14,183 @@ document.addEventListener("DOMContentLoaded", () => {
   const heightInput = document.getElementById("heightInput");
 
   let selectedElement = null;
-  let selectedData = null;
-
-  // قيم افتراضية
   let currentFont = "Cairo";
   let currentGradient = null;
   let currentDress = null;
-  let currentMode = "solid";
 
-  // إنشاء التدرجات
+  /* إنشاء 50 تدرج */
   const gradients = [];
   for (let i = 0; i < 50; i++) {
-    const a = `hsl(${(i * 360) / 50} 80% 45%)`;
-    const b = `hsl(${((i * 360) / 50 + 40) % 360} 80% 60%)`;
+    const a = `hsl(${(i * 360) / 50}, 80%, 50%)`;
+    const b = `hsl(${((i * 360) / 50 + 45) % 360}, 80%, 65%)`;
     gradients.push([a, b]);
   }
 
-  // زر فتح قائمة الخطوط
+  /* فتح قائمة الخطوط */
   openFontList.addEventListener("click", () => {
+    fontList.innerHTML = "";
+    fetchFonts();
     fontList.classList.toggle("active");
   });
 
-  fontList.querySelectorAll(".font-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      currentFont = item.style.fontFamily.replace(/['"]/g, "");
-      openFontList.textContent = item.textContent;
-      fontList.classList.remove("active");
-      if (selectedElement && selectedElement.dataset.type === "text") {
-        selectedElement.style.fontFamily = currentFont;
-      }
+  function fetchFonts() {
+    const fonts = ["ReemKufi", "Amiri", "NotoKufiArabic"];
+    fonts.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "font-item";
+      div.style.fontFamily = f;
+      div.textContent = f;
+      div.onclick = () => {
+        currentFont = f;
+        if (selectedElement && selectedElement.dataset.type === "text") {
+          selectedElement.style.fontFamily = currentFont;
+        }
+        fontList.classList.remove("active");
+      };
+      fontList.appendChild(div);
     });
-  });
-
-  // إنشاء قائمة التدرجات
-  openColorGrid.addEventListener("click", () => {
-    showPopup("gradients");
-  });
-
-  openDressGrid.addEventListener("click", () => {
-    showPopup("dressup");
-  });
-
-  function showPopup(type) {
-    const popup = document.createElement("div");
-    popup.className = "popup-container open";
-    const inner = document.createElement("div");
-    inner.className = "popup";
-
-    const title = document.createElement("h3");
-    title.textContent = type === "gradients" ? "اختر تدرج" : "اختر تلبيسة";
-    inner.appendChild(title);
-
-    const grid = document.createElement("div");
-    grid.className = type === "gradients" ? "grad-grid" : "dress-grid";
-
-    if (type === "gradients") {
-      gradients.forEach((g) => {
-        const s = document.createElement("div");
-        s.className = "grad-sample";
-        s.style.background = `linear-gradient(90deg, ${g[0]}, ${g[1]})`;
-        s.addEventListener("click", () => {
-          currentGradient = g;
-          currentMode = "gradient";
-          if (selectedElement) applyGradient(selectedElement, g);
-          document.body.removeChild(popup);
-        });
-        grid.appendChild(s);
-      });
-    } else {
-      // تحميل صور من المجلد assets/dressup
-      fetch("../assets/dressup/")
-        .then(() => {
-          for (let i = 1; i <= 20; i++) {
-            const d = document.createElement("div");
-            d.className = "dress-item";
-            const img = document.createElement("img");
-            img.src = `../assets/dressup/${i}.png`;
-            img.onerror = () => (img.style.display = "none");
-            d.appendChild(img);
-            d.addEventListener("click", () => {
-              currentDress = img.src;
-              currentMode = "dress";
-              if (selectedElement) applyDress(selectedElement, img.src);
-              document.body.removeChild(popup);
-            });
-            grid.appendChild(d);
-          }
-        })
-        .catch(() => {});
-    }
-
-    const closeBtn = document.createElement("button");
-    closeBtn.textContent = "إغلاق";
-    closeBtn.className = "btn";
-    closeBtn.onclick = () => document.body.removeChild(popup);
-
-    inner.appendChild(grid);
-    inner.appendChild(closeBtn);
-    popup.appendChild(inner);
-    document.body.appendChild(popup);
   }
 
-  // زر الإضافة
+  /* زر إضافة */
   btnAdd.addEventListener("click", () => {
-    const type = modeSelect.value;
-    if (type === "text") {
+    const mode = modeSelect.value;
+    if (mode === "text") {
       const text = textInput.value.trim();
       if (!text) return alert("أدخل نصاً أولاً");
-
       const div = document.createElement("div");
-      div.className = "text-item canvas-item";
-      div.textContent = text;
+      div.className = "text-item";
       div.dataset.type = "text";
-      div.style.fontFamily = currentFont;
+      div.textContent = text;
       div.style.left = "50%";
       div.style.top = "50%";
       div.style.transform = "translate(-50%, -50%)";
+      div.style.fontFamily = currentFont;
       editorCanvas.appendChild(div);
       makeMovable(div);
       selectedElement = div;
-      applyCurrentStyle(div);
     } else {
       const file = fileImage.files[0];
       if (!file) return alert("اختر صورة أولاً");
       const reader = new FileReader();
-      reader.onload = function (e) {
-        const imgWrap = document.createElement("div");
-        imgWrap.className = "img-wrap canvas-item";
-        imgWrap.dataset.type = "image";
-
+      reader.onload = e => {
+        const wrap = document.createElement("div");
+        wrap.className = "img-wrap";
+        wrap.dataset.type = "image";
         const img = document.createElement("img");
         img.src = e.target.result;
-        imgWrap.appendChild(img);
-        imgWrap.style.left = "50%";
-        imgWrap.style.top = "50%";
-        imgWrap.style.transform = "translate(-50%, -50%)";
-        editorCanvas.appendChild(imgWrap);
-        makeMovable(imgWrap);
-        selectedElement = imgWrap;
-        applyCurrentStyle(imgWrap);
+        wrap.appendChild(img);
+        wrap.style.left = "50%";
+        wrap.style.top = "50%";
+        wrap.style.transform = "translate(-50%, -50%)";
+        editorCanvas.appendChild(wrap);
+        makeMovable(wrap);
+        selectedElement = wrap;
       };
       reader.readAsDataURL(file);
     }
   });
 
-  // تطبيق الأنماط
-  function applyCurrentStyle(el) {
-    if (!el) return;
-    if (el.dataset.type === "text") {
-      el.style.fontFamily = currentFont;
-      if (currentMode === "gradient" && currentGradient)
-        applyGradient(el, currentGradient);
-      else if (currentMode === "dress" && currentDress)
-        applyDress(el, currentDress);
-      else el.style.color = "#000";
-    } else if (el.dataset.type === "image") {
-      if (currentMode === "gradient" && currentGradient)
-        applyGradient(el, currentGradient);
-      else if (currentMode === "dress" && currentDress)
-        applyDress(el, currentDress);
-    }
-  }
+  /* تدرجات */
+  openGradientList.addEventListener("click", () => {
+    const popup = document.createElement("div");
+    popup.className = "popup-container open";
+    const inner = document.createElement("div");
+    inner.className = "popup";
+    const grid = document.createElement("div");
+    grid.className = "grad-grid";
 
+    gradients.forEach(g => {
+      const el = document.createElement("div");
+      el.className = "grad-sample";
+      el.style.background = `linear-gradient(90deg, ${g[0]}, ${g[1]})`;
+      el.onclick = () => {
+        if (selectedElement) applyGradient(selectedElement, g);
+        popup.remove();
+      };
+      grid.appendChild(el);
+    });
+
+    inner.appendChild(grid);
+    popup.appendChild(inner);
+    popup.addEventListener("click", e => { if (e.target === popup) popup.remove(); });
+    document.body.appendChild(popup);
+  });
+
+  /* تلبيسات */
+  openDressList.addEventListener("click", () => {
+    const popup = document.createElement("div");
+    popup.className = "popup-container open";
+    const inner = document.createElement("div");
+    inner.className = "popup";
+    const grid = document.createElement("div");
+    grid.className = "dress-grid";
+
+    for (let i = 1; i <= 20; i++) {
+      const div = document.createElement("div");
+      div.className = "dress-item";
+      const img = document.createElement("img");
+      img.src = `../assets/dressup/${i}.png`;
+      img.onerror = () => div.remove();
+      div.appendChild(img);
+      div.onclick = () => {
+        if (selectedElement) applyDress(selectedElement, img.src);
+        popup.remove();
+      };
+      grid.appendChild(div);
+    }
+
+    inner.appendChild(grid);
+    popup.appendChild(inner);
+    popup.addEventListener("click", e => { if (e.target === popup) popup.remove(); });
+    document.body.appendChild(popup);
+  });
+
+  /* تطبيق تدرج */
   function applyGradient(el, g) {
     if (el.dataset.type === "text") {
       el.style.background = `linear-gradient(90deg, ${g[0]}, ${g[1]})`;
       el.style.webkitBackgroundClip = "text";
-      el.style.backgroundClip = "text";
-      el.style.color = "transparent";
       el.style.webkitTextFillColor = "transparent";
     } else if (el.dataset.type === "image") {
-      el.querySelector("img").style.filter = `contrast(1.2) saturate(1.2) drop-shadow(0 0 3px ${g[0]})`;
+      el.querySelector("img").style.filter = `contrast(1.2) drop-shadow(0 0 5px ${g[0]})`;
     }
   }
 
+  /* تطبيق تلبيس */
   function applyDress(el, src) {
     if (el.dataset.type === "text") {
       el.style.backgroundImage = `url(${src})`;
       el.classList.add("dressed");
     } else if (el.dataset.type === "image") {
-      el.querySelector("img").style.mixBlendMode = "multiply";
+      el.classList.add("dressed");
       el.querySelector("img").src = src;
     }
   }
 
-  // جعل العناصر قابلة للتحريك والتكبير
+  /* تحريك وتكبير */
   function makeMovable(el) {
-    let isDragging = false;
-    let offsetX, offsetY;
-    el.addEventListener("mousedown", (e) => {
+    let isDragging = false, startX, startY;
+    el.addEventListener("mousedown", e => {
       isDragging = true;
-      offsetX = e.offsetX;
-      offsetY = e.offsetY;
+      startX = e.offsetX;
+      startY = e.offsetY;
       selectedElement = el;
     });
-    window.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        el.style.left = e.pageX - offsetX + "px";
-        el.style.top = e.pageY - offsetY + "px";
-      }
+    document.addEventListener("mousemove", e => {
+      if (!isDragging) return;
+      const rect = editorCanvas.getBoundingClientRect();
+      el.style.left = e.pageX - rect.left - startX + "px";
+      el.style.top = e.pageY - rect.top - startY + "px";
     });
-    window.addEventListener("mouseup", () => (isDragging = false));
+    document.addEventListener("mouseup", () => isDragging = false);
 
     // للموبايل
-    let touchStart = null;
-    el.addEventListener("touchstart", (e) => {
-      touchStart = e.touches[0];
+    el.addEventListener("touchstart", e => {
       selectedElement = el;
     });
-    el.addEventListener("touchmove", (e) => {
-      if (!touchStart) return;
-      const touch = e.touches[0];
-      const dx = touch.clientX - touchStart.clientX;
-      const dy = touch.clientY - touchStart.clientY;
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-    el.addEventListener("touchend", () => (touchStart = null));
   }
 
-  // حذف العنصر المحدد
+  /* حذف المحدد */
   deleteSelected.addEventListener("click", () => {
     if (selectedElement) {
       selectedElement.remove();
@@ -240,24 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // التحميل كصورة
+  /* تحميل الصورة */
   downloadImage.addEventListener("click", () => {
-    const canvas = document.createElement("canvas");
-    const w = parseInt(widthInput.value) || 1250;
-    const h = parseInt(heightInput.value) || 1250;
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d");
-
     html2canvas(editorCanvas, {
       backgroundColor: null,
-      scale: 2,
-    }).then((canvasResult) => {
-      const imgData = canvasResult.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = imgData;
-      a.download = "design.png";
-      a.click();
+      scale: 2
+    }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "design.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     });
   });
 });
